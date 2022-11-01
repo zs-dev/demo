@@ -22,5 +22,5 @@
 
     @endforeach
     </table>
-    <a href="{{ url('/') }}">Home</a>
+    <a href="{{ $index }}">Home</a>
 @stop

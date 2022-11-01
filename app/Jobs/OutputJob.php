@@ -67,7 +67,8 @@ class OutputJob implements ShouldQueue
             'average_page_load_in_seconds' => (array_sum($times) / $pages->count()),
             'average_word_count' => (array_sum($wordCount) / $pages->count()),
             'average_title_length' => (array_sum($titleCount) / $pages->count()),
-            'pages' => $pages
+            'pages' => $pages,
+            'index' => config('app.url')
 
         ];
     }
