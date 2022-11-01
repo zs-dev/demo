@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Library\Crawler;
 use App\Jobs\{SavePagesJob, MultiCurlJob, OutputJob};
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class CrawlerController extends Controller
 {
@@ -31,9 +32,9 @@ class CrawlerController extends Controller
      *
      * @param Request $request
      *
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function crawl(Request $request): View
+    public function crawl(Request $request): View|RedirectResponse
     {
         $path = $request->input('path');
 
