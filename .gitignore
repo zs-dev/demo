@@ -17,3 +17,5 @@ yarn-error.log
 /.editorconfig
 /.php-cs-fixer.cache
 /.styleci.yml
+expose
+/docker

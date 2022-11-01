@@ -11,6 +11,16 @@ use Illuminate\Support\Facades\DB;
 
 class CrawlerDbActions
 {
+    /**
+     * Create page.
+     *
+     * @param string $path
+     * @param Response $response
+     * @param DOMXPath $xPath
+     * @param CrawlerRequest $crawlerRequest
+     *
+     * @return Page
+     */
     public function savePage(string $path, Response $response, DOMXPath $xPath, CrawlerRequest $crawlerRequest): Page
     {
         return Page::create([
@@ -23,6 +33,15 @@ class CrawlerDbActions
         ]);
     }
 
+    /**
+     * Mass insert for page's resouces.
+     *
+     * @param array $resources
+     * @param Page $page
+     * @param string $resourceSting
+     *
+     * @return void
+     */
     public function saveResource(array $resources, Page $page, string $resourceSting)
     {
         $resources = collect($resources)->unique();

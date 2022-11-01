@@ -7,7 +7,6 @@ namespace App\Jobs;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Page;
@@ -20,11 +19,20 @@ class OutputJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * OutputJob constructor.
+     *
+     * @param int $crawlerId
+     */
     public function __construct(private int $crawlerId)
     {
     }
 
-
+    /**
+     * Create data from crawling.
+     *
+     * @return array
+     */
     public function handle(): array
     {
         $pages = Page::where('crawler_request_id', $this->crawlerId)->with('resources')->get();

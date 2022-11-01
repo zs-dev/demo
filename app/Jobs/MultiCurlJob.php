@@ -7,7 +7,6 @@ namespace App\Jobs;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Library\Crawler;
@@ -21,10 +20,20 @@ class MultiCurlJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * MultiCurlJob constructor.
+     *
+     * @param array $urls
+     */
     public function __construct(private array $urls)
     {
     }
 
+    /**
+     * Multi curl calls.
+     *
+     * @return array
+     */
     public function handle(): array
     {
         $urls = $this->urls;

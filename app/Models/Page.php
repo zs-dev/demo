@@ -22,11 +22,21 @@ class Page extends Model
         'load_time',
     ];
 
+    /**
+     * Defines relationship.
+     *
+     * @return BelongsTo
+     */
     public function crawlerRequest(): BelongsTo
     {
         return $this->belongsTo(CrawlerRequest::class, 'id');
     }
 
+    /**
+     * Defines relationship.
+     *
+     * @return HasMany
+     */
     public function resources(): HasMany
     {
         return $this->hasMany(Resource::class, 'page_id');

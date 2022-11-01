@@ -6,20 +6,35 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use App\Models\{Page, CrawlerRequest, Resource};
+use App\Models\Resource;
 use Illuminate\Support\Facades\Validator;
-use App\Library\{CrawlerDbActions, Crawler};
+use App\Library\Crawler;
 use App\Jobs\{SavePagesJob, MultiCurlJob, OutputJob};
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class CrawlerController extends Controller
 {
+    /**
+     * Displays initial form.
+     *
+     * @param Request $request
+     *
+     * @return View
+     */
     public function index(Request $request): View
     {
         return view('pages.index');
     }
 
-    public function crawl(Request $request): View
+    /**
+     * Process form data for crawling.
+     *
+     * @param Request $request
+     *
+     * @return View|RedirectResponse
+     */
+    public function crawl(Request $request): View|RedirectResponse
     {
         $path = $request->input('path');
 
