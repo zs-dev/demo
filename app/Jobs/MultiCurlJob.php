@@ -32,15 +32,15 @@ class MultiCurlJob implements ShouldQueue
         $urls = $this->urls;
         $responses = Http::pool(function(Pool $pool) use ($urls) {
            foreach ($urls as $url) {
-               $pool->get('https://agencyanalytics.com/' . ltrim($url['path'], '/'));
+               $pool->get(Crawler::ROOT_URL . $url['path']);
            }
         });
 
         return $responses;
     }
 
-    public function failed(\Throwable $exception)
-    {
-        \dump('from failed: ' . $exception->getMessage());
-    }
+    // public function failed(\Throwable $exception)
+    // {
+    //     \dump('from failed: ' . $exception->getMessage());
+    // }
 }

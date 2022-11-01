@@ -20,9 +20,9 @@ class Resource extends Model
         return $this->belongsTo(Page::class, 'id');
     }
 
-    public static function getRemainingUrls(string $slashPath, int $pageId, int $numberOfPages): array
+    public static function getRemainingUrls(string $path, int $pageId, int $numberOfPages): array
     {
-        return self::whereNotIn('path', [$slashPath])
+        return self::whereNotIn('path', [$path])
                     ->where('resource', 'internal_link')
                     ->where('page_id', $pageId)
                     ->inRandomOrder()

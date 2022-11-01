@@ -13,6 +13,8 @@ use App\Library\CrawlerDbActions;
 
 class Crawler
 {
+    public const ROOT_URL = 'https://agencyanalytics.com';
+
     //private Response $response;
     private DOMXPath $xPath;
     private ResourceParserInterface $resourceParser;
@@ -27,11 +29,13 @@ class Crawler
     )
     {
         //$this->response = $response;
-        $doc = new DOMDocument();
-        $internalErrors = libxml_use_internal_errors(true);
-        $doc->loadHTML($this->response->getBody()->getContents());
-        libxml_use_internal_errors($internalErrors);
-        $this->xPath = new DOMXPath($doc);
+        // $doc = new DOMDocument();
+        // $internalErrors = libxml_use_internal_errors(true);
+        // $doc->loadHTML($this->response->getBody()->getContents());
+        // libxml_use_internal_errors($internalErrors);
+        // $this->xPath = new DOMXPath($doc);
+        $this->setPath($this->path);
+        $this->setXPath($this->response);
         $this->crawlerDbActions = app()->make(CrawlerDbActions::class);
     }
 
@@ -48,7 +52,6 @@ class Crawler
         foreach ($parsers as $parser) {
             $data = $parser->parse($this->xPath);
             $this->crawlerDbActions->saveResource($data, $this->page, $parser->getResource());
-
         }
     }
 
@@ -70,5 +73,40 @@ class Crawler
     public function parse(): array
     {
         return $this->resourceParser->parse($this->xPath);
+    }
+
+    public function setPath(string $path)
+    {
+        if ($path === '/') {
+            $this->path = $path;
+        } else {
+            $this->path = rtrim($path, '/');
+        }
+        //dump($this->path);
+
+        return $this;
+    }
+
+    public function setXPath(Response $response)
+    {
+        $doc = new DOMDocument();
+        $internalErrors = libxml_use_internal_errors(true);
+        $doc->loadHTML($this->response->getBody()->getContents());
+        libxml_use_internal_errors($internalErrors);
+        $this->xPath = new DOMXPath($doc);
+
+        return $this;
+    }
+
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
+
+        return $this;
     }
 }

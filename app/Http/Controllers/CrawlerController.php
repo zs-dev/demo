@@ -17,41 +17,30 @@ use Illuminate\Http\Client\Pool as LaravePool;
 use Illuminate\Support\Facades\Http as LaravelHttp;
 use App\Library\Crawler;
 use App\Library\CrawlerDbActions;
-use Illuminate\Support\Str;
 use App\Jobs\MultiCurlJob;
+use App\Jobs\CreateCrawlerJob;
+use App\Jobs\OutputJob;
 
 class CrawlerController extends Controller {
+
     public function index(Request $request)
     {
         return view('pages.index', ['name' => 'James']);
     }
+
     public function crawl(Request $request)
     {
-
-
-// return $responses[0]->ok() &&
-//        $responses[1]->ok() &&
-//        $responses[2]->ok();
-
-
-// $request->validate([
-//             'name' => 'required',
-//         ]);
         $path = $request->input('path');
+
         $path = (empty($path)) ? '/' : $path;
-        $path = ltrim($path, '/');
-        $slashPath = $path  . '/';
-        $path = ($path === '/') ? null : $path;
-        $response = Http::get('https://agencyanalytics.com/' . $path);
+        $path = ($path === '/') ? $path : ltrim($path, '/');
+        $path = ($path === '/') ? $path : rtrim($path, '/');
+        $path = ($path === '/') ? $path : '/' . $path;
+        $response = Http::get(Crawler::ROOT_URL . $path);
 
         $validator = Validator::make($request->all(), [
             'path' => [
                 function ($attribute, $value, $fail) use ($response) {
-                    if ($value === '/') {
-                        $value = '';
-                    }
-
-                    $response = Http::get('https://agencyanalytics.com/' . $value);
                     if ($response->getStatusCode() !== 200) {
                         $fail('The '.$attribute.' is invalid.');
                     }
@@ -63,71 +52,14 @@ class CrawlerController extends Controller {
             return back()->withErrors($validator->errors())->withInput();
         }
 
-$crawler = app()->makeWith(Crawler::class, ['response' => $response, 'path' => $slashPath]);
-$crawler->savePage();
-$crawler->saveResources();
-$urls = Resource::getRemainingUrls($slashPath, $crawler->getPage()->id, ($request->input('number_of_pages') - 1));
-$responses = MultiCurlJob::dispatchNow($urls);
-
-    // $urls = Resource::whereNotIn('path', [$slashPath])
-    //         ->where('resource', 'internal_link')
-    //         ->where('page_id', $crawler->getPage()->id)
-    //         ->inRandomOrder()
-    //         ->limit($request->input('number_of_pages') - 1)
-    //         ->get(['path']);
-
-    // $urls = $urls->toArray();
-    // $responses = Http::pool(function(LaravePool $pool) use ($urls) {
-    //    foreach ($urls as $url) {
-    //        $pool->get('https://agencyanalytics.com/' . ltrim($url['path'], '/'));
-    //    }
-    // });
-
-    foreach ($responses as $key => $response) {
-        //$crawler = app()->makeWith(Crawler::class, ['response' => $response, 'path' => $urls[$key]['path']]);
-        $crawler = app()->makeWith(
-            Crawler::class,
-            ['response' => $response, 'path' => $urls[$key]['path'], 'crawlerRequest' => $crawler->getCrawlerRequest()]
-        );
-
+        $crawler = app()->makeWith(Crawler::class, ['response' => $response, 'path' => $path]);
         $crawler->savePage();
         $crawler->saveResources();
-    }
-    $pages = Page::where('crawler_request_id', $crawler->getCrawlerRequest()->id)->with('resources')->get();
+        $urls = Resource::getRemainingUrls($path, $crawler->getPage()->id, ($request->input('number_of_pages') - 1));
+        $responses = MultiCurlJob::dispatchNow($urls);
+        CreateCrawlerJob::dispatchNow($responses, $urls, $crawler);
 
-    $imagePaths = [];
-    $internalPaths = [];
-    $externalPaths = [];
-    $times = [];
-    $wordCount = [];
-    $titleCount = [];
-
-    foreach ($pages as $page) {
-        foreach ($page->resources as $resource) {
-            if ($resource->resource === 'image') {
-                $imagePaths[] = $resource->path;
-            } elseif ($resource->resource === 'internal_link') {
-                $internalPaths[] = $resource->path;
-            } elseif ($resource->resource === 'external_link') {
-                $externalPaths[] = $resource->path;
-            }
-        }
-        $times[] = $page->load_time;
-        $wordCount[] = $page->word_count;
-        $titleCount[] = Str::length($page->title);
-    }
-
-    return view('pages.crawler', [
-        'number_pages_crawled' => $pages->count(),
-        'number_unique_images' => count(array_unique($imagePaths)),
-        'number_unique_internal_links' => count(array_unique($internalPaths)),
-        'number_unique_external_links' => count(array_unique($externalPaths)),
-        'average_page_load_in_seconds' => (array_sum($times) / $pages->count()),
-        'average_word_count' => (array_sum($wordCount) / $pages->count()),
-        'average_title_length' => (array_sum($titleCount) / $pages->count()),
-        'pages' => $pages
-
-    ]);
+        return view('pages.crawler', OutputJob::dispatchNow($crawler->getCrawlerRequest()->id));
 
 dd($responses);
 
@@ -214,7 +146,7 @@ $page = Page::create([
         DB::table('resources')->insertOrIgnore($records);
     }
 
-    $urls = Resource::whereNotIn('path', [$slashPath])
+    $urls = Resource::whereNotIn('path', [$path])
     ->where('resource', 'internal_link')
     ->where('page_id', $page->id)
     ->inRandomOrder()
