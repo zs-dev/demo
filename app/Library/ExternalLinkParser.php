@@ -8,6 +8,13 @@ use DOMXPath;
 
 class ExternalLinkParser implements ResourceParserInterface
 {
+    /**
+     * Parse external links.
+     *
+     * @param DOMXPath $xPath
+     *
+     * @return array
+     */
     public function parse(DOMXPath $xPath): array
     {
         $external = [];
@@ -22,6 +29,11 @@ class ExternalLinkParser implements ResourceParserInterface
         return $external;
     }
 
+    /**
+     * Return resource type.
+     *
+     * @return string
+     */
     public function getResource(): string
     {
         return 'external_link';

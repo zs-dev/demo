@@ -8,6 +8,13 @@ use DOMXPath;
 
 class InternalLinkParser implements ResourceParserInterface
 {
+    /**
+     * Parse internal links.
+     *
+     * @param DOMXPath $xPath
+     *
+     * @return array
+     */
     public function parse(DOMXPath $xPath): array
     {
         $internal = [];
@@ -21,6 +28,11 @@ class InternalLinkParser implements ResourceParserInterface
         return $internal;
     }
 
+    /**
+     * Return resource type.
+     *
+     * @return string
+     */
     public function getResource(): string
     {
         return 'internal_link';

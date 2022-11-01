@@ -12,6 +12,11 @@ class CrawlerRequest extends Model
 {
     use HasFactory;
 
+    /**
+     * Defines relationship.
+     *
+     * @return HasMany
+     */
     public function pages(): HasMany
     {
         return $this->hasMany(Page::class, 'crawler_request_id');
