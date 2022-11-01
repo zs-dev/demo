@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Resource extends Model
 {
@@ -15,7 +18,7 @@ class Resource extends Model
         'page_id',
     ];
 
-    public function page()
+    public function page(): BelongsTo
     {
         return $this->belongsTo(Page::class, 'id');
     }
@@ -31,6 +34,3 @@ class Resource extends Model
                     ->toArray();
     }
 }
-
-
-

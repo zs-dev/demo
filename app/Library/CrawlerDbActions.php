@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Library;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
-use DOMDocument;
 use DOMXPath;
-use App\Models\{Page, CrawlerRequest, Resource};
+use App\Models\{Page, CrawlerRequest};
 use Illuminate\Support\Facades\DB;
 
 class CrawlerDbActions
@@ -25,7 +23,7 @@ class CrawlerDbActions
         ]);
     }
 
-    public function saveResource(array $resources, Page $page, string $resourceSting): void
+    public function saveResource(array $resources, Page $page, string $resourceSting)
     {
         $resources = collect($resources)->unique();
         foreach ($resources->chunk(500)->toArray() as $resourceArray) {

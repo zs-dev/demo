@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\Library;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Client\Response;
-use DOMDocument;
 use DOMXPath;
-use App\Models\{Page, CrawlerRequest, Resource};
 
 class InternalLinkParser implements ResourceParserInterface
 {
@@ -20,7 +16,7 @@ class InternalLinkParser implements ResourceParserInterface
             if (!preg_match('/(http|https)/', $tag->getAttribute('href'))) {
                 $internal[] = $tag->getAttribute('href');
             }
-         }
+        }
 
         return $internal;
     }

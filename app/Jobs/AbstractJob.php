@@ -20,5 +20,8 @@ use Illuminate\Http\Client\Pool;
 
 abstract class Job implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 }

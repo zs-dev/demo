@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Library;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
 use DOMDocument;
 use DOMXPath;
-use App\Models\{Page, CrawlerRequest, Resource};
+use App\Models\{Page, CrawlerRequest};
 use App\Library\CrawlerDbActions;
 
 class Crawler
@@ -25,15 +24,7 @@ class Crawler
         private string $path,
         private CrawlerRequest $crawlerRequest,
         private CrawlerDbActions $crawlerDbActions,
-
-    )
-    {
-        //$this->response = $response;
-        // $doc = new DOMDocument();
-        // $internalErrors = libxml_use_internal_errors(true);
-        // $doc->loadHTML($this->response->getBody()->getContents());
-        // libxml_use_internal_errors($internalErrors);
-        // $this->xPath = new DOMXPath($doc);
+    ) {
         $this->setPath($this->path);
         $this->setXPath($this->response);
         $this->crawlerDbActions = app()->make(CrawlerDbActions::class);
@@ -75,19 +66,18 @@ class Crawler
         return $this->resourceParser->parse($this->xPath);
     }
 
-    public function setPath(string $path)
+    public function setPath(string $path): Crawler
     {
         if ($path === '/') {
             $this->path = $path;
         } else {
             $this->path = rtrim($path, '/');
         }
-        //dump($this->path);
 
         return $this;
     }
 
-    public function setXPath(Response $response)
+    public function setXPath(Response $response): Crawler
     {
         $doc = new DOMDocument();
         $internalErrors = libxml_use_internal_errors(true);
@@ -98,12 +88,7 @@ class Crawler
         return $this;
     }
 
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    public function setResponse(Response $response)
+    public function setResponse(Response $response): Crawler
     {
         $this->response = $response;
 

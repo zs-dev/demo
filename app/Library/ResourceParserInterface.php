@@ -10,6 +10,4 @@ interface ResourceParserInterface
 {
     public function parse(DOMXPath $xPath): array;
     public function getResource(): string;
-
-
 }
