@@ -4,21 +4,14 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use App\Library\Crawler;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Pool;
 
-class MultiCurlJob implements ShouldQueue
+class MultiCurlJob
 {
     use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
 
     /**
      * MultiCurlJob constructor.

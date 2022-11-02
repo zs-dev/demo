@@ -4,20 +4,13 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use App\Models\Page;
 use Illuminate\Support\Str;
 
-class OutputJob implements ShouldQueue
+class OutputJob
 {
     use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
 
     /**
      * OutputJob constructor.
